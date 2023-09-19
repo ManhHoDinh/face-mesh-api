@@ -2,3 +2,5 @@
  uvicorn
  python-multipart
  annotate
+ cv2
+ mediapipe
