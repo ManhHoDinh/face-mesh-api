@@ -3,6 +3,7 @@ from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
 import cv2
 import mediapipe as mp
+import requests
 import numpy as np  # Add this line to import NumPy
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -14,11 +15,22 @@ app = FastAPI()
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World 2"}
+    return {"Hello": "World 23"}
 
 @app.post("/files/")
 async def create_file(file: Annotated[bytes, File()]):
     return {"file_size": len(file)}
+@app.post("/detectHuggingFace/")
+async def detectHuggingFace(file: UploadFile):
+    API_URL = "https://api-inference.huggingface.co/models/jonathandinu/face-parsing"
+    headers = {"Authorization": "Bearer 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"}
+    def query(filename):
+        with open(filename, "rb") as f:
+            data = f.read()
+            response = requests.post(API_URL, headers=headers, data=data)
+            return response.json()
+    output = query("person.png")
+    return output
 
 @app.post("/detectImage/")
 async def create_upload_file(file: UploadFile):
